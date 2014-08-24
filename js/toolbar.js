@@ -5,48 +5,85 @@ var oojs = (function (oojs) {
 
 		[].forEach.call(itemElms, function (el, index, array){
 
-			var item = {
-				el : el,
-				disable : function (){
-					this.el.classList.add("disabled"); 
-				}, // disable
+			var item  = {
+				toggleActiveState : function (){
+					this.activated = !this.activated;
+				}
+			}; // objLit
 
-				enable : function () {
-					this.el.classList.remove("disabled");
-				}, // enable
+			Object.defineProperties(item, {
+				el : {
+					value : el
+				}, // el
+				enabled : {
+					get : function (){
+						return !this.el.classList.contains("disabled");
+					}, // get
+					set : function (value) {
+						if(value) {
+							this.el.classList.remove("disabled");
+						} else {
+							this.el.classList.add("disabled");
+						} // if/ else
+					} // set
+				}, // enabled
 
-				isDisabled : function (){
-					return this.el.classList.contains("disabled");
-				}, // isDisabled
+				activated : {
+					get : function (){
+						return this.el.classList.contains("active");
+					}, // get
+					set : function (value) {
+						if(value) {
+							this.el.classList.add("active");
+						} else {
+							this.el.classList.remove("active");
+						} // if/ else
+					} // set
+				} // activated
+			}); // defineProp
 
-				activate : function (){
-					if(this.isDisabled()) {
-						return;
-					} else {
-						this.el.classList.add("active");
-					} // if/else
-				}, // activate
+			// var item = {
+			// 	el : el,
+			// 	disable : function (){
+			// 		this.el.classList.add("disabled"); 
+			// 	}, // disable
 
-				deactivate : function (){
-					if(this.isDisabled()) {
-						return;
-					} else {
-						this.el.classList.remove("active");
-					} // if/else
-				}, // deactivate 
-				isActive : function (){
-					return this.el.classList.containts("active");
-				}, // isActive 
+			// 	enable : function () {
+			// 		this.el.classList.remove("disabled");
+			// 	}, // enable
 
-				toggleActiveState : function () {
-					if(this.isActive) {
-						this.deactivate();
-					} else {
-						this.activate();
-					}
-				} // toggleActiveState
+			// 	isDisabled : function (){
+			// 		return this.el.classList.contains("disabled");
+			// 	}, // isDisabled
+
+			// 	activate : function (){
+			// 		if(this.isDisabled()) {
+			// 			return;
+			// 		} else {
+			// 			this.el.classList.add("active");
+			// 		} // if/else
+			// 	}, // activate
+
+			// 	deactivate : function (){
+			// 		if(this.isDisabled()) {
+			// 			return;
+			// 		} else {
+			// 			this.el.classList.remove("active");
+			// 		} // if/else
+			// 	}, // deactivate 
+			// 	isActive : function (){
+			// 		return this.el.classList.containts("active");
+			// 	}, // isActive 
+
+			// 	toggleActiveState : function () {
+			// 		if(this.isActive) {
+			// 			this.deactivate();
+			// 		} else {
+			// 			this.activate();
+			// 		}
+			// 	} // toggleActiveState
  
-			}; // item
+			// }; // item
 
 			items.push(item);
 
