@@ -1,16 +1,48 @@
-html {
-	background-color: #f2f2f2;
+/* apply a natural box layout model to all elements */
+*, *:before, *:after {
+  -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 }
+
+.cf:after,
+.cf:before {
+    content: '';
+    display: table;
+}
+
+.cf:after {clear: both;}
+.cf {zoom: 1;}
+
+html {
+    margin: 0;
+    padding: 0;
+    line-height: 1.4;
+    font-size: 100%;
+    background-color: #ecf0f1;
+} 
 
 body {
-	width: 90%;
-	margin: 0 auto;
+    width: 97.5%;
+    margin: 0 auto;
+    color: #666;
+    background-color: #fff;
 }
 
+h1, h2 { color: #333;}
+
+.container {
+    padding: 1em;
+    margin: 0 auto;
+    margin-bottom: .5em;
+}
+
+/* ------------------------
+ TOOLBAR
+--------------------------- */
+
 .toolbar {
-	margin-top: 1em;
+    margin-top: 1em;
     background-color: #e3e3e3;
-    height: 50px;
+    height: 60px;
     padding: 5px;
 }
 

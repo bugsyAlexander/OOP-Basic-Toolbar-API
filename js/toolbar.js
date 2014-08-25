@@ -1,108 +1,125 @@
 var oojs = (function (oojs) {
 
-	var createToolbarItems = function (itemElms){
-		var items = [];
+    var ToolbarItem = function (itemElement) {
+        Object.defineProperty(this, "_el", {
+            value: itemElement
+        }); // objDefine
+    }; // ToolbarItem
 
-		[].forEach.call(itemElms, function (el, index, array){
+    Object.defineProperties(ToolbarItem.prototype, {
+        toggleActiveState: {
+            value : function () {
+                this.activated = !this.activated;
+            },
+            enumerable : true
+        }, // toggleActiveState
 
-			var item  = {
-				toggleActiveState : function (){
-					this.activated = !this.activated;
-				}
-			}; // objLit
+        enabled: {
+            get: function () {
+                return !this._el.classList.contains("disabled");
+            }, // get
+            set: function (value) {
+                if (value) {
+                    this._el.classList.remove("disabled");
+                } else {
+                    this._el.classList.add("disabled");
+                } // if/else
+            } // set
+        }, // enabled
 
-			Object.defineProperties(item, {
-				el : {
-					value : el
-				}, // el
-				enabled : {
-					get : function (){
-						return !this.el.classList.contains("disabled");
-					}, // get
-					set : function (value) {
-						if(value) {
-							this.el.classList.remove("disabled");
-						} else {
-							this.el.classList.add("disabled");
-						} // if/ else
-					} // set
-				}, // enabled
+        activated: {
+            get: function () {
+                return this._el.classList.contains("active");
+            }, // get
+            set: function (value) {
+                if (value) {
+                    this._el.classList.add("active");
+                } else {
+                    this._el.classList.remove("active");
+                } // if/else
+            } // set
+        } // activated 
 
-				activated : {
-					get : function (){
-						return this.el.classList.contains("active");
-					}, // get
-					set : function (value) {
-						if(value) {
-							this.el.classList.add("active");
-						} else {
-							this.el.classList.remove("active");
-						} // if/ else
-					} // set
-				} // activated
-			}); // defineProp
+    }); // objDefineProperties
 
-			// var item = {
-			// 	el : el,
-			// 	disable : function (){
-			// 		this.el.classList.add("disabled"); 
-			// 	}, // disable
+    var createToolbarItems = function (itemElements) {
+        var items = [];
 
-			// 	enable : function () {
-			// 		this.el.classList.remove("disabled");
-			// 	}, // enable
+        [].forEach.call(itemElements, function (el, index, array) {
+            var item = new ToolbarItem(el);
 
-			// 	isDisabled : function (){
-			// 		return this.el.classList.contains("disabled");
-			// 	}, // isDisabled
+            items.push(item);
+        }); // [].forEach
 
-			// 	activate : function (){
-			// 		if(this.isDisabled()) {
-			// 			return;
-			// 		} else {
-			// 			this.el.classList.add("active");
-			// 		} // if/else
-			// 	}, // activate
+        return items;
+    }; // createToolbar Items
 
-			// 	deactivate : function (){
-			// 		if(this.isDisabled()) {
-			// 			return;
-			// 		} else {
-			// 			this.el.classList.remove("active");
-			// 		} // if/else
-			// 	}, // deactivate 
-			// 	isActive : function (){
-			// 		return this.el.classList.containts("active");
-			// 	}, // isActive 
+    var Toolbar = function (toolbarElement) {
+        var items = toolbarElement.querySelectorAll(".toolbar-item");
 
-			// 	toggleActiveState : function () {
-			// 		if(this.isActive) {
-			// 			this.deactivate();
-			// 		} else {
-			// 			this.activate();
-			// 		}
-			// 	} // toggleActiveState
- 
-			// }; // item
+        Object.defineProperties(this, {
+            _el: {
+                value: toolbarElement
+            }, // el
+            items: {
+                value: createToolbarItems(items),
+                enumerable: true
+            } // items
+        }); // objDefineProperties
+    }; // Toolbar
 
-			items.push(item);
+    Object.defineProperties(Toolbar.prototype, {
+        add: {
+            value: function (options) {
+                var span = document.createElement("SPAN");
+                span.className = "toolbar-item";
 
-		}); // forEach 
+                this._el.appendChild(span);
 
-		return items;
-	}; // createToolbarItems
+                var item = new ToolbarItem(span);
 
-	oojs.createToolbar = function (elementId){
-		var elm = document.getElementById(elementId),
-			items = elm.querySelectorAll(".toolbar-item");
+                this.items.push(item);
+            }, // value
+            enumerable : true
+        }, // add
 
-		return {
-			items : createToolbarItems(items)
-		}; // return
+        remove: {
+            value: function (index) {
+                var len = this.items.length;
 
+                if (index > len || index < 0) {
+                    throw new Error("Index is out of range");
+                } // if
 
-	}; // createToolbar
+                var item = this.items[index];
+                this.items.splice(index, 1);
+                this._el.removeChild(item._el);
 
-	return oojs; 
+                item = null;
+            }, // value
+            enumerable : true
+        }, // remove
+
+        appendTo: {
+            value: function (parentElement) {
+                parentElement.appendChild(this._el);
+            }, // value
+            enumerable: true
+        } // appendTo
+    }); // objDefineProperties
+
+    oojs.createToolbar = function (elementId) {
+        var element = document.getElementById(elementId);
+
+        if (!element) {
+            element = document.createElement("DIV");
+            element.id = elementId;
+            element.className = "toolbar";
+        } // if
+
+        return new Toolbar(element);
+    }; // createToolbar
+
+    return oojs;
 
 }(oojs || {})); // oojs
