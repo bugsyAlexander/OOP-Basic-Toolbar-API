@@ -33,6 +33,21 @@
  	</div>
 
 <!-- javascript -->
+<script type="text/javascript" src="js/eventTarget.js"></script>
 <script type="text/javascript" src="js/toolbar.js"></script>
+
+<script>
+	var toolbar = oojs.createToolbar("myToolbar");
+
+	toolbar.addListener("itemremoved", function (evt) {
+		console.log(evt.type);
+    });
+
+    toolbar.items[0].addListener("enabledchanged", function (evt) {
+		console.log(evt.value);
+    });
+	
+
+</script>
 </body>
 </html>

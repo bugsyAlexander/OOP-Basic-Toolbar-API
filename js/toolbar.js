@@ -1,12 +1,14 @@
-var oojs = (function (oojs) {
+ var oojs = (function (oojs) {
 
     var ToolbarItem = function (itemElement) {
+        EventTarget.call(this);
+
         Object.defineProperty(this, "_el", {
             value: itemElement
         }); // objDefine
     }; // ToolbarItem
 
-    Object.defineProperties(ToolbarItem.prototype, {
+    ToolbarItem.prototype = Object.create(EventTarget.prototype, {
         toggleActiveState: {
             value : function () {
                 this.activated = !this.activated;
@@ -19,11 +21,21 @@ var oojs = (function (oojs) {
                 return !this._el.classList.contains("disabled");
             }, // get
             set: function (value) {
+                var currentValue = this.enabled; // get
+
+                if (currentValue === value) {
+                    return;
+                } // if
+
                 if (value) {
                     this._el.classList.remove("disabled");
                 } else {
                     this._el.classList.add("disabled");
                 } // if/else
+                this.__fire({
+                    type : "enabledchanged",
+                    value : value
+                }); // this
             } // set
         }, // enabled
 
@@ -32,11 +44,21 @@ var oojs = (function (oojs) {
                 return this._el.classList.contains("active");
             }, // get
             set: function (value) {
+                var currentValue = this.activated; // get
+
+                if (currentValue === value) {
+                    return;
+                } // if
+
                 if (value) {
                     this._el.classList.add("active");
                 } else {
                     this._el.classList.remove("active");
                 } // if/else
+                this.__fire({
+                    type : "activatedchanged",
+                    value : value
+                }); // this
             } // set
         } // activated 
 
@@ -55,6 +77,8 @@ var oojs = (function (oojs) {
     }; // createToolbar Items
 
     var Toolbar = function (toolbarElement) {
+        EventTarget.call(this);
+
         var items = toolbarElement.querySelectorAll(".toolbar-item");
 
         Object.defineProperties(this, {
@@ -68,7 +92,7 @@ var oojs = (function (oojs) {
         }); // objDefineProperties
     }; // Toolbar
 
-    Object.defineProperties(Toolbar.prototype, {
+    Toolbar.prototype = Object.create(EventTarget.prototype, {
         add: {
             value: function (options) {
                 var span = document.createElement("SPAN");
@@ -79,6 +103,11 @@ var oojs = (function (oojs) {
                 var item = new ToolbarItem(span);
 
                 this.items.push(item);
+
+                this.__fire({
+                    type : "itemadded",
+                    item : item
+                }); // thisFire
             }, // value
             enumerable : true
         }, // add
@@ -96,6 +125,12 @@ var oojs = (function (oojs) {
                 this._el.removeChild(item._el);
 
                 item = null;
+
+                this.__fire({
+                    type : "itemremoved",
+                    index : index
+                });
+
             }, // value
             enumerable : true
         }, // remove
@@ -103,6 +138,11 @@ var oojs = (function (oojs) {
         appendTo: {
             value: function (parentElement) {
                 parentElement.appendChild(this._el);
+
+                this.__fire({
+                    type: "appended",
+                    parentElement: parentElement
+                }); // thisFire
             }, // value
             enumerable: true
         } // appendTo
